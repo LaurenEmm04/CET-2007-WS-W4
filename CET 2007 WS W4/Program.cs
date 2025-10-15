@@ -93,7 +93,9 @@ namespace CET2007WSW4
             }
             catch (ReadingOutOfRangeException ex)
             {
+
                 Console.WriteLine($"[ReadingOutOfRangeException] {ex.Message}");
+                Console.WriteLine($"Attempted Value: {ex.AttemptedValue}, Min: {ex.Min}, Max: {ex.Max}");
             }
             catch (SensorOfflineException ex)
             {
@@ -158,7 +160,7 @@ namespace CET2007WSW4
 
                 if (value < Min || value > Max)
                 {
-                    throw new ReadingOutOfRangeException("Reading " + value + " is outside range [" + Min + " .. " + Max + "] for " + Name + ".");
+                    throw new ReadingOutOfRangeException($"Reading {value} is outside range [{Min} .. {Max}] for {Name}.", value, Min, Max );
                 }
             }
         }
@@ -172,7 +174,17 @@ namespace CET2007WSW4
 
         public class ReadingOutOfRangeException : Exception
         {
-            public ReadingOutOfRangeException(string message) : base(message) { }
+            public double AttemptedValue { get; }
+            public double Min { get; }
+            public double Max { get; }
+            public ReadingOutOfRangeException(string message, double attemptedValue, double min, double max)
+                : base(message)
+            {
+                AttemptedValue = attemptedValue;
+                Min = min;
+                Max = max;
+            }
         }
+
     }
 }
