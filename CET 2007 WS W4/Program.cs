@@ -7,18 +7,15 @@ namespace CET2007WSW4
 
         static void Main(string[] args)
         {
-            string[] tempname = {"Temperature", "Humidity", "Motion" };
-            string[] rawread = {"22.5", "bad_data", "-5.0"};
+            string[] tempname = { "Temperature", "Humidity", "Motion" };
+            string[] rawread = { "22.5", "bad_data", "-5.0" };
             SensorReading[] readings = new SensorReading[tempname.Length]; //stores the readings in an array
             SensorReading reading = new SensorReading("Temperature", 22.5);
             Console.WriteLine(reading);
 
-
-
-            for (int i = 0; i < tempname.Length; i++ )
+            for (int i = 0; i < tempname.Length; i++)
             {
                 Console.WriteLine(tempname[i]);
-
                 double value;
 
                 try
@@ -35,7 +32,7 @@ namespace CET2007WSW4
                     value = 0.0; //set it to 0.0
                 }
                 readings[i] = new SensorReading(tempname[i], value);
-                
+
 
             }
             for (int i = 0; i < readings.Length; i++)
@@ -56,7 +53,7 @@ namespace CET2007WSW4
             };
             double[] sampleReadings = new double[] { 22.5, 120.0, 1.0 };
 
-            for (int i =0; i<sensors.Length; i++)
+            for (int i = 0; i < sensors.Length; i++)
             {
                 Console.WriteLine($"Checking {sensors[i].Name} with value {sampleReadings[i]}");
                 try
@@ -73,6 +70,45 @@ namespace CET2007WSW4
                     Console.WriteLine($"{sensors[i].Name} reading out of range. Value = {sampleReadings[i]}");
                 }
             }
+
+            Console.WriteLine("Testing exception highrarchy. Press enter to clear the console");
+            Console.Clear();
+            Console.WriteLine("Now testing exception highrarchy.");
+
+
+            try
+            {   //triggers reading out of range
+                Sensor tempSensor = new Sensor("Temperature", -20, 50, true);
+
+                //-- TESTING EXCEPTION, COMMENT THE 3 VALIDATION PARTS OUT, LEAVING ONE TO SEE WHAT EACH ONE SAYS
+                
+                tempSensor.ValidateReading(999); //too high of a temp
+
+                //triggers sensor offline exception
+                Sensor motionSensor = new Sensor("Motion", 0, 1, false);
+                //motionSensor.ValidateReading(1); //sensor offline
+
+                sensors[5].ValidateReading(22.5); // not in index
+
+            }
+            catch (ReadingOutOfRangeException ex)
+            {
+                Console.WriteLine($"[ReadingOutOfRangeException] {ex.Message}");
+            }
+            catch (SensorOfflineException ex)
+            {
+                Console.WriteLine($"[SensorOfflineException] {ex.Message}");
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                Console.WriteLine($"[IndexOutOfRangeException] {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[General Exception] {ex.Message}");
+            }
+
+
 
         }
 
@@ -95,7 +131,7 @@ namespace CET2007WSW4
                 return $"Sensor: {Name} - Value: {Value}";
             }
         }
-        
+
 
 
 
@@ -106,7 +142,7 @@ namespace CET2007WSW4
             public double Max { get; set; }
             public bool IsOnline { get; set; }
 
-            public Sensor (string name, double min, double max, bool isOnline)
+            public Sensor(string name, double min, double max, bool isOnline)
             {
                 Name = name;
                 Min = min;
@@ -125,11 +161,11 @@ namespace CET2007WSW4
                     throw new ReadingOutOfRangeException("Reading " + value + " is outside range [" + Min + " .. " + Max + "] for " + Name + ".");
                 }
             }
-}
+        }
 
 
 
-public class SensorOfflineException : Exception
+        public class SensorOfflineException : Exception
         {
             public SensorOfflineException(string message) : base(message) { }
         }
