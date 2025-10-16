@@ -49,30 +49,49 @@ namespace CET2007WSW4
             {
             new Sensor("Temperature", -20, 50, true),
             new Sensor("Humidity", 0, 100, true),
-            new Sensor("Motion", 0, 1, false)
+            new Sensor("Motion", 0, 1, false),
+            new Sensor("Pressure", 950, 1050, true),
+            new Sensor("Light", 0, 1000, true)
             };
-            double[] sampleReadings = new double[] { 22.5, 120.0, 1.0 };
+            double[] sampleReadings = new double[] { 22.5, 120.0, 1.0, 800.0, 500.0 };
 
             for (int i = 0; i < sensors.Length; i++)
             {
-                Console.WriteLine($"Checking {sensors[i].Name} with value {sampleReadings[i]}");
                 try
                 {
+                    Console.WriteLine($"Sensor: {sensors[i].Name}");
                     sensors[i].ValidateReading(sampleReadings[i]);
-                    Console.WriteLine($"{sensors[i].Name} reading is good");
+                    Console.WriteLine("Reading OK.\n");
                 }
-                catch (SensorOfflineException)
+                catch (SensorOfflineException ex)
                 {
-                    Console.WriteLine($"{sensors[i].Name} sensor offline.");
+                    Console.WriteLine($"[SensorOfflineException] {ex.Message}");
                 }
-                catch (ReadingOutOfRangeException)
+                catch (ReadingOutOfRangeException ex)
                 {
-                    Console.WriteLine($"{sensors[i].Name} reading out of range. Value = {sampleReadings[i]}");
+                    Console.WriteLine($"[ReadingOutOfRangeException] {ex.Message}");
+                    Console.WriteLine($"Attempted Value: {ex.AttemptedValue}, Min: {ex.Min}, Max: {ex.Max}");
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine($"[ArgumentOutOfRangeException] {ex.Message}");
+                }
+                catch (IndexOutOfRangeException ex)
+                {
+                    Console.WriteLine($"[IndexOutOfRangeException] {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[General Exception] {ex.Message}");
+                }
+                finally
+                {
+                    Console.WriteLine($"{sensors[i].Name} Sensor Monitoring pass complete");
                 }
             }
 
+
             Console.WriteLine("Testing exception highrarchy. Press enter to clear the console");
-            Console.Clear();
             Console.WriteLine("Now testing exception highrarchy.");
 
 
